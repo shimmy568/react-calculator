@@ -11,8 +11,10 @@ Simple 4 function calculator implemented in react
 
 ### Node
 
-> npm install
-> npm start
+```bash
+npm install
+npm start
+```
 
 Also works with yarn if you prefer
 
