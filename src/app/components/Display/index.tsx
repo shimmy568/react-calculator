@@ -1,6 +1,7 @@
 import React, { FC } from 'react';
 import styled from 'styled-components/macro';
 import { OperatorEnum } from 'types/OperatorEnum';
+import { formatValue } from 'utils/calculator-utils';
 
 interface DisplayProps {
   displayValue: string;
@@ -13,41 +14,6 @@ export const Display: FC<DisplayProps> = ({
   storedValue,
   operator,
 }) => {
-  const formatValue = (value: string) => {
-    if (value === '') return '0'; // Empty value should display 0
-    let newValue = '';
-    let isNeg = false;
-    let decimal = '';
-
-    if (value[0] === '-') {
-      isNeg = true;
-      value = value.substring(1);
-    }
-
-    // Extract decimal segment if there is one to add back in later
-    if (value.indexOf('.') !== -1) {
-      decimal = value.substring(value.indexOf('.'));
-      value = value.substring(0, value.indexOf('.'));
-    }
-
-    // Add a comma for every three numbers we have going from right to left
-    let c = 1;
-    for (let i = value.length - 1; i >= 0; i--) {
-      newValue = value[i] + newValue;
-      if (c % 3 === 0 && c !== value.length) {
-        newValue = ',' + newValue;
-      }
-      c++;
-    }
-
-    // Add back in the negative sign
-    if (isNeg) {
-      newValue = '-' + newValue;
-    }
-
-    return newValue + decimal;
-  };
-
   let operatorStr = '';
   switch (operator) {
     case OperatorEnum.Addition:
@@ -71,7 +37,7 @@ export const Display: FC<DisplayProps> = ({
     return (
       <>
         <StoredDisplay></StoredDisplay>
-        <MainDisplay>{formatValue(storedValue)}</MainDisplay>
+        <MainDisplay>{formatValue(storedValue, true)}</MainDisplay>
       </>
     );
   }
@@ -83,7 +49,7 @@ export const Display: FC<DisplayProps> = ({
         {storedValue && formatValue(storedValue)}
         {operatorStr}
       </StoredDisplay>
-      <MainDisplay>{formatValue(displayValue)}</MainDisplay>
+      <MainDisplay>{formatValue(displayValue, true)}</MainDisplay>
     </>
   );
 };

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import styled from 'styled-components/macro';
 import { OperatorEnum } from 'types/OperatorEnum';
+import { formatValue } from 'utils/calculator-utils';
 import { CalculatorButton } from '../CalculatorButton';
 import { Display } from '../Display';
 import { HistoryList } from '../HistoryList';
@@ -11,24 +12,43 @@ export function Calculator() {
   const [operator, setOperator] = useState<OperatorEnum>(OperatorEnum.None);
   const [history, setHistory] = useState<string[]>([]);
 
+  const decimalAccuracy = 6;
+
+  const formatHistory = (
+    v1: number,
+    v2: number,
+    ans: number,
+    operator: string,
+  ): string => {
+    let s1 = v1.toFixed(decimalAccuracy).toString();
+    let s2 = v2.toFixed(decimalAccuracy).toString();
+    let sAns = formatValue(ans.toFixed(decimalAccuracy).toString());
+    return `${formatValue(s1)} ${operator} ${formatValue(s2)} = ${sAns}`;
+  };
+
   const doCalculation = (
     v1: number,
     v2: number,
     operator: OperatorEnum,
   ): string => {
+    let ans: number;
     switch (operator) {
       case OperatorEnum.Addition:
-        setHistory([`${v1} + ${v2} = ${v1 + v2}`, ...history]);
-        return (v1 + v2).toString();
+        ans = v1 + v2;
+        setHistory([formatHistory(v1, v2, ans, '+'), ...history]);
+        return formatValue(ans.toFixed(decimalAccuracy).toString());
       case OperatorEnum.Subtraction:
-        setHistory([`${v1} - ${v2} = ${v1 - v2}`, ...history]);
-        return (v1 - v2).toString();
+        ans = v1 - v2;
+        setHistory([formatHistory(v1, v2, ans, '-'), ...history]);
+        return formatValue(ans.toFixed(decimalAccuracy).toString());
       case OperatorEnum.Multiplication:
-        setHistory([`${v1} × ${v2} = ${v1 * v2}`, ...history]);
-        return (v1 * v2).toString();
+        ans = v1 * v2;
+        setHistory([formatHistory(v1, v2, ans, '×'), ...history]);
+        return formatValue(ans.toFixed(decimalAccuracy).toString());
       case OperatorEnum.Division:
-        setHistory([`${v1} ÷ ${v2} = ${v1 / v2}`, ...history]);
-        return (v1 / v2).toString();
+        ans = v1 / v2;
+        setHistory([formatHistory(v1, v2, ans, '÷'), ...history]);
+        return formatValue(ans.toFixed(decimalAccuracy).toString());
     }
     console.error('Unknown operator');
     return '';
@@ -44,8 +64,8 @@ export function Calculator() {
     } else {
       // Do the maths
       let result = doCalculation(
-        parseInt(storedValue, 10),
-        parseInt(displayValue, 10),
+        parseFloat(storedValue),
+        parseFloat(displayValue),
         operator,
       );
 
@@ -66,7 +86,7 @@ export function Calculator() {
 
   const onOperatorButtonClick = (value: OperatorEnum) => {
     if (operator === OperatorEnum.None) {
-      if (displayValue === '') {
+      if (displayValue === '' && storedValue === '') {
         if (value === OperatorEnum.Subtraction) {
           setDisplayValue('-');
         }
