@@ -52,7 +52,7 @@ export function Calculator() {
     }
     console.error('Unknown operator');
     return '';
-  };
+  }; /* */
 
   const processValue = () => {
     if (storedValue === '' || operator === OperatorEnum.None) {
